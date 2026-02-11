@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - API</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <form id="loginForm" class="login-card">
+            <h2>Cadastrar</h2>
+            <input type="text" id="username" placeholder="Usuário" required>
+            <input type="email" id="email" placeholder="Email" required />
+            <input type="password" id="password" placeholder="Senha" required>
+            <button type="submit">Cadastrar</button>
+            <p></p>
+            <p id="error" style="color:red; display:none">Falha na criação.</p>
+        </form>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            const email = document.getElementById("email").value;
+            const nome = document.getElementById("username").value;
+            const senha = document.getElementById("password").value;
+            const ativo = true;
+            const admin = false;
+
+            const response = await fetch(`${API_URL}/auth/criar_conta`, { 
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({nome, email, senha, ativo, admin})
+            });
+
+            const responseLogin = await fetch(`${API_URL}/auth/login`, { // Verifique se sua rota é /auth/token ou /token
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({email, senha})
+            });
+
+            if (responseLogin.ok) {
+                const data = await responseLogin.json();
+                localStorage.setItem('access_token', data.access_token);
+                window.location.href = "pedidos.html";
+            } else {
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').innerHTML = "Email já cadastrado!";
+            }
+        };
+    </script>
+</body>
+</html>

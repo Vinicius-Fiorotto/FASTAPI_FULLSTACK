@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - API</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <form id="loginForm" class="login-card">
+            <h2>Sistema de Pedidos</h2>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Senha" required>
+            <button type="submit">Entrar</button>
+            <p></p>
+            <button type="button" id="registrar">Registrar</button>
+            <p id="error" style="color:red; display:none">Falha na autenticação.</p>
+        </form>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+
+        document.getElementById("registrar").addEventListener("click", () => {
+            window.location.href = "registrar.html";
+        });
+        
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            const email = document.getElementById("email").value;
+            const senha = document.getElementById("password").value;
+
+            const response = await fetch(`${API_URL}/auth/login`, { // Verifique se sua rota é /auth/token ou /token
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({email, senha})
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('access_token', data.access_token);
+                window.location.href = "pedidos.html";
+            } else {
+                document.getElementById('error').style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>
