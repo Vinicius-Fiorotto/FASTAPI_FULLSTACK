@@ -29,5 +29,3 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(order_router)
-
-#para rodar o código, executar no terminal: uvicorn main:app --reload
